@@ -1,6 +1,6 @@
-name: 'Python Action'
-author: Peter Evans
-description: 'A template to bootstrap the creation of a multi-platform Python GitHub action'
+name: 'GitHub Template Renderer'
+author: Patrick Sodre
+description: 'A GitHub Action for rendering GitHub Templates'
 inputs:
   message:
     description: 'A message to the world'
@@ -17,5 +17,5 @@ runs:
   using: 'node12'
   main: 'dist/index.js'
 branding:
-  icon: 'activity'  
-  color: 'yellow'
+  icon: 'activity'
+  color: 'blue'
