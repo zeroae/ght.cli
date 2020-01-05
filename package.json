@@ -1,22 +1,22 @@
 {
-  "name": "python-action",
+  "name": "ght-render-action",
   "version": "1.0.0",
-  "description": "A template to bootstrap the creation of a multi-platform Python GitHub action",
+  "description": "A GitHub Action for rendering GitHub Templates",
   "main": "index.js",
   "scripts": {
     "build": "ncc build index.js -o dist"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/peter-evans/python-action.git"
+    "url": "git+https://github.com/sodre/ght-render.git"
   },
   "keywords": [],
-  "author": "Peter Evans",
+  "author": "Patrick Sodré",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/peter-evans/python-action/issues"
+    "url": "https://github.com/sodre/ght-render/issues"
   },
-  "homepage": "https://github.com/peter-evans/python-action",
+  "homepage": "https://github.com/sodre/ght-render",
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/exec": "^1.0.1",
