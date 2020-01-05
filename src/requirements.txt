@@ -1,1 +1,4 @@
-jinja2-cli==0.7.0
+gitpython
+pyyaml
+jinja2
+jinja2-time
