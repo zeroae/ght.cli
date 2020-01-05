@@ -21,14 +21,15 @@ async function run() {
 
     // Fetch action inputs
     const inputs = {
-      template_url: core.getInput("template_url"),
+      template: core.getInput("template"),
     };
     core.debug(`Inputs: ${inspect(inputs)}`);
 
     // Execute python script
     await exec.exec("python", [
       `${src}/action.py`,
-      inputs.template_url,
+        // TODO: How to get https://github.com/ from environment, for github enterprise
+      `https://github.com/${inputs.template}`,
     ]);
   } catch (error) {
     core.setFailed(error.message);

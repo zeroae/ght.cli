@@ -2,8 +2,8 @@ name: 'GitHub Template Renderer'
 author: Patrick Sodre
 description: 'A GitHub Action for rendering GitHub Templates'
 inputs:
-  template-url:
-    description: 'The GitHub Template URL'
+  template:
+    description: 'The GitHub Template to use, e.g. (sodre/ght-template@master)'
     required: true
   sender:
     description: 'The sender of the message'
