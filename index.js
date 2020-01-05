@@ -21,16 +21,14 @@ async function run() {
 
     // Fetch action inputs
     const inputs = {
-      message: core.getInput("message"),
-      sender: core.getInput("sender")
+      template_url: core.getInput("template_url"),
     };
     core.debug(`Inputs: ${inspect(inputs)}`);
 
     // Execute python script
     await exec.exec("python", [
       `${src}/action.py`,
-      inputs.message,
-      inputs.sender
+      inputs.template_url,
     ]);
   } catch (error) {
     core.setFailed(error.message);

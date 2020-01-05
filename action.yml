@@ -2,10 +2,9 @@ name: 'GitHub Template Renderer'
 author: Patrick Sodre
 description: 'A GitHub Action for rendering GitHub Templates'
 inputs:
-  message:
-    description: 'A message to the world'
+  template-url:
+    description: 'The GitHub Template URL'
     required: true
-    default: 'Hello World!'
   sender:
     description: 'The sender of the message'
     required: true
