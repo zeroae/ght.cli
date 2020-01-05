@@ -143,12 +143,16 @@ class GHT(object):
         """
         Render all tree content
         """
-        for template_name in self.env.list_templates():
-            template: Template = self.env.get_template(template_name)
+        paths_to_render = [o.path for _, o in
+                           self.repo.index.iter_blobs()
+                           if not o.path.startswith(".github") or o.path.endswith(".ght")]
+
+        for path in paths_to_render:
+            template: Template = self.env.get_template(path)
             rendered = template.render(self.config)
-            with open(os.path.join(self.repo.working_tree_dir, template_name), "w") as f:
+            with open(os.path.join(self.repo.working_tree_dir, path), "w") as f:
                 f.write(rendered)
-            self.repo.index.add(template_name)
+            self.repo.index.add(path)
 
     @classmethod
     def init(cls, path, template_url, config: dict = None):
