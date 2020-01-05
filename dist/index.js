@@ -983,7 +983,7 @@ async function run() {
 
     // Execute python script
     await exec.exec("python", [
-      __webpack_require__.ab + "python-action.py",
+      __webpack_require__.ab + "action.py",
       inputs.message,
       inputs.sender
     ]);

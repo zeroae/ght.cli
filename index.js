@@ -28,7 +28,7 @@ async function run() {
 
     // Execute python script
     await exec.exec("python", [
-      `${src}/python-action.py`,
+      `${src}/action.py`,
       inputs.message,
       inputs.sender
     ]);
