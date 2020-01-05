@@ -195,12 +195,11 @@ def commit_and_push():
 
 
 def go():
-    # message = sys.argv[1]
+    template_url = sys.argv[1]
     # sender = sys.argv[2]
-    ght_url = "https://github.com/sodre/ght-pypackage.git"
 
     # Setup the GHT Repository
-    ght = GHT(repo_path=".", template_url=ght_url)
+    ght = GHT(repo_path=".", template_url=template_url)
     ght.render_tree()
 
     #os.system('echo ::set-output name=reply::Hello %s!' % ght_url)

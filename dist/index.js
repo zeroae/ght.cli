@@ -976,16 +976,15 @@ async function run() {
 
     // Fetch action inputs
     const inputs = {
-      message: core.getInput("message"),
-      sender: core.getInput("sender")
+      template: core.getInput("template"),
     };
     core.debug(`Inputs: ${inspect(inputs)}`);
 
     // Execute python script
     await exec.exec("python", [
-      __webpack_require__.ab + "action.py",
-      inputs.message,
-      inputs.sender
+      `${src}/action.py`,
+        // TODO: How to get https://github.com/ from environment, for github enterprise
+      `https://github.com/${inputs.template}`,
     ]);
   } catch (error) {
     core.setFailed(error.message);
