@@ -51,11 +51,6 @@ class GHT(object):
         self.repo = Repo(path=repo_path)
         self.template_url = template_url
 
-        if not os.path.exists(ght_conf := os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")):
-            raise ValueError(f"{repo_path} is an invalid GHT repository. No .github/ght.yaml file found.")
-        with open(ght_conf, "r") as f:
-            self.config = yaml.load(f, Loader=yaml.SafeLoader)
-
         self.env = Environment(
             loader=RestrictedFileSystemLoader(self.repo.working_tree_dir),
             extensions=[
@@ -65,7 +60,16 @@ class GHT(object):
                 "jinja2_time.TimeExtension"
             ]
         )
+
+        self.load_config()
+        self.fetch_template()
         self.configure_author()
+
+    def load_config(self):
+        if not os.path.exists(ght_conf := os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")):
+            raise ValueError(f"{self.repo.working_tree_dir} is an invalid GHT repository. No .github/ght.yaml file found.")
+        with open(ght_conf, "r") as f:
+            self.config = yaml.load(f, Loader=yaml.SafeLoader)
 
     def configure_author(self):
         """
@@ -81,17 +85,18 @@ class GHT(object):
     def prepare_tree_for_rendering(self):
         """
         git rm -rf .
-        git fetch {ght_url} {refspec}:ght/template
         git checkout ght/template -- .
         git checkout HEAD -- .github/ght.yaml
         """
         self.remove_all()
 
-        ght_url, refspec = self.template_url.split("@")
-        self.repo.git.fetch(ght_url, f"{refspec}:ght/template")
         self.repo.git.checkout("ght/template", "--", ".")
 
         self.repo.git.checkout("HEAD", "--", ".github/ght.yaml")
+
+    def fetch_template(self):
+        ght_url, refspec = self.template_url.split("@")
+        self.repo.git.fetch(ght_url, f"{refspec}:ght/template")
 
     def remove_all(self):
         """
@@ -113,8 +118,31 @@ class GHT(object):
             os.rmdir(os.path.join(self.repo.working_tree_dir, path))
         self.repo.index.update()
 
+    def render_ght_conf(self):
+        """
+        Render the .github/ght.yaml file
+        """
+        ght_conf_path = os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")
+        with open(ght_conf_path) as f:
+            curr_ght_yaml = f.read().splitlines()
+        next_ght_yaml = curr_ght_yaml
+
+        converged, index = False, -1
+        while not converged:
+            curr_ght_yaml = next_ght_yaml[:index+1] + curr_ght_yaml[index+1:]
+            config = yaml.safe_load("\n".join(curr_ght_yaml))
+            next_ght_yaml = [self.env.from_string(line).render(config)
+                             for line in curr_ght_yaml]
+            converged, index = iterable_converged(curr_ght_yaml, next_ght_yaml)
+
+        with open(ght_conf_path, "w") as f:
+            f.write("\n".join(curr_ght_yaml))
+        self.repo.index.add(".github/ght.yaml")
+
     def render_tree(self):
         self.prepare_tree_for_rendering()
+        self.render_ght_conf()
+        self.load_config()
         self.render_tree_content()
         self.render_tree_structure()
         self.repo.index.commit(f"[ght]: rendered {self.template_url}")
@@ -145,7 +173,7 @@ class GHT(object):
         """
         paths_to_render = [o.path for _, o in
                            self.repo.index.iter_blobs()
-                           if not o.path.startswith(".github") or o.path.endswith(".ght")]
+                           if not o.path.startswith(".github/") or o.path.endswith(".ght")]
 
         for path in paths_to_render:
             template: Template = self.env.get_template(path)
@@ -174,21 +202,13 @@ class GHT(object):
 
 def iterable_converged(left, right):
     """
-    Returns true of the two iterables generate identical, false otherwise.
+    Returns True, None if the two iterables generate identical, False, index otherwise.
+    The index indicates the first position where the iterables differ
     """
-    for l, r in zip_longest(left, right):
+    for i, (l, r) in enumerate(zip_longest(left, right)):
         if l != r:
-            return False
-    return True
-
-
-def file_converged(left_filename: str, right_filename: str):
-    """
-    Returns true if two files are identical, otherwise false
-    """
-    with open(left_filename) as left:
-        with open(right_filename) as right:
-            return iterable_converged(left, right)
+            return False, i
+    return True, None
 
 
 def commit_and_push():

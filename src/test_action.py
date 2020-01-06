@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 
 import pytest
 from git import Repo, Tree, Actor, Blob
@@ -43,7 +44,9 @@ def ght(tmpdir, template: Repo):
                            hello="Hello World!",
                            a="alpha",
                            b="beta",
-                           c="charlie"
+                           c="charlie",
+                           abc="{{ght.a}}/{{ght.b}}/{{ght.c}}",
+                           abcd="{{ght.abc}}/delta"
                        )
                    ))
     assert not ght.repo.bare
@@ -64,10 +67,10 @@ def test_iterable_converged():
     bar = "bar"
     foobar = "foobar"
 
-    assert iterable_converged(foo, foo)
-    assert not iterable_converged(foo, bar)
-    assert not iterable_converged(foo, foobar)
-    assert not iterable_converged(foobar, foo)
+    assert iterable_converged(foo, foo)[0]
+    assert not iterable_converged(foo, bar)[0]
+    assert not iterable_converged(foo, foobar)[0]
+    assert not iterable_converged(foobar, foo)[0]
 
 
 def test_render_tree_structure(ght):
@@ -100,3 +103,10 @@ def test_prepare_tree_for_rendering(ght: GHT):
 
 def test_render_tree(ght: GHT):
     ght.render_tree()
+
+
+def test_render_ght_conf(ght: GHT):
+    ght.render_ght_conf()
+    ght.load_config()
+    assert ght.config["ght"]["abc"] == "alpha/beta/charlie"
+    assert ght.config["ght"]["abcd"] == "alpha/beta/charlie/delta"
