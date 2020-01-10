@@ -158,7 +158,7 @@ class GHT(object):
 
         for old_new in objs_to_rename:
             self.repo.index.move(old_new)
-        self.repo.index.update()
+            self.repo.index.update()
 
     def render_ght_obj_name(self, name):
         if name.endswith(".ght"):
