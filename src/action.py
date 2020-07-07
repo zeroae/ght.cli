@@ -144,8 +144,9 @@ class GHT(object):
         self.render_ght_conf()
         self.load_config()
         self.render_tree_content()
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} content")
         self.render_tree_structure()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url}")
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure")
 
     def render_tree_structure(self):
         """
