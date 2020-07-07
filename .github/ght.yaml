@@ -48,5 +48,5 @@ cookiecutter:
   email: psodre@gmail.com
   github_username: sodre
   github_organization: zeroae
-  project_repo: gittr.cli
+  project_repo: gittr
   project_short_description: GIT Template Render (GITTR)

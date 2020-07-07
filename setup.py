@@ -67,7 +67,7 @@ setup_kwargs = dict(
     # fmt: off
     entry_points={
         "console_scripts": [
-            "gittr=gittr.cli.cli:cli",
+            "gittr=gittr.cli:cli",
         ],
     },
     # fmt: on
@@ -101,7 +101,7 @@ if "CONDA_BUILD_STATE" in os.environ:
         del setup_kwargs["use_scm_version"]
     except ModuleNotFoundError:
         print(
-            "Error: gittr.cli requires that setuptools_scm be installed with conda-build!"  # noqa: E501
+            "Error: gittr requires that setuptools_scm be installed with conda-build!"  # noqa: E501
         )
         raise
     setup_kwargs["conda_rosetta_stone"] = conda_rosetta_stone
