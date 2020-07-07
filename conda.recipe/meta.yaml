@@ -3,8 +3,8 @@
 {% set rosetta = data["conda_rosetta_stone"] %}
 
 package:
-  name: gittr.cli
-  
+  name: gittr
+
   version: {{ data['version'] }}
 
 source:
