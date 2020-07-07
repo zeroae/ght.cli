@@ -1,0 +1,16 @@
+[run]
+branch = true
+source =
+    carlae.cli
+
+[paths]
+source =
+    src
+    **/site-packages
+
+[report]
+omit =
+    setup.py
+    src/carlae/cli/__main__.py
+    src/carlae/cli/_version.py
+    tests/*
