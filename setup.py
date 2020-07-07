@@ -14,6 +14,10 @@ requirements = [
     "click>=7.0",
     "click-plugins",
     "entrypoints",
+    "gitpython >=3.1.0,<3.2",
+    "jinja2 >=2.11.1,<3",
+    "jinja2-time ==0.2.0",
+    "pyyaml >=5.3.1,<6",
     # fmt: on
 ]
 
