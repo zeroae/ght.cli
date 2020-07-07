@@ -11,7 +11,3 @@ from entrypoints import get_group_named
 def cli(args=None):
     """gittr command-line-interface"""
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(cli)  # pragma: no cover
