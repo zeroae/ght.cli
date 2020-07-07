@@ -16,8 +16,8 @@ ght:
     - ( ) None
 
   license:
-    - (*) MIT
-    - ( ) BSD
+    - ( ) MIT
+    - (*) BSD
     - ( ) ISC
     - ( ) Apache
     - ( ) GNUv3
@@ -27,9 +27,9 @@ cookiecutter:
   #
   # These were guess based on the repository information
   # You probably want to customize them.
-  project_namespace: carlae
+  project_namespace: gittr
   project_slug: cli
-  project_name: Carlae's CLI
+  project_name: GIT Template Render (GITTR)
 
   #
   # These are likely correct...
@@ -48,5 +48,5 @@ cookiecutter:
   email: psodre@gmail.com
   github_username: sodre
   github_organization: zeroae
-  project_repo: carlae.cli
-  project_short_description: Carlae's CLI
+  project_repo: gittr.cli
+  project_short_description: GIT Template Render (GITTR)

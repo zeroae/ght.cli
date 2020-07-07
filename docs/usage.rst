@@ -3,14 +3,14 @@ Usage
 =====
 Command line interface
 ----------------------
-To use Carlae's CLI command line tool:
+To use GIT Template Render (GITTR) command line tool:
 
-.. click:: carlae.cli.cli:cli
-  :prog: carlae
+.. click:: gittr.cli.cli:cli
+  :prog: gittr
   :show-nested:
 
 Library Usage
 -------------
-To use Carlae's CLI in a project::
+To use GIT Template Render (GITTR) in a project::
 
-    import carlae.cli
+    import gittr.cli

@@ -3,7 +3,7 @@
 {% set rosetta = data["conda_rosetta_stone"] %}
 
 package:
-  name: carlae.cli
+  name: gittr.cli
   
   version: {{ data['version'] }}
 
@@ -62,7 +62,7 @@ test:
     - pytest tests
 
 about:
-  home: https://github.com/zeroae/carlae.cli
-  summary: Carlae's CLI
+  home: https://github.com/zeroae/gittr.cli
+  summary: GIT Template Render (GITTR)
   license: {{ data.get('license') }}
   license_file: LICENSE

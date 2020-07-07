@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-"""Tests for `carlae.cli` package."""
+"""Tests for `gittr.cli` package."""
 
 import pytest
 from click.testing import CliRunner
-from carlae.cli import cli
+from gittr.cli import cli
 
 
 @pytest.fixture

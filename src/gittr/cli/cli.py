@@ -1,4 +1,4 @@
-"""Console script for carlae.cli."""
+"""Console script for gittr.cli."""
 
 import sys
 import click
@@ -6,10 +6,10 @@ from click_plugins import with_plugins
 from entrypoints import get_group_named
 
 
-@with_plugins(get_group_named("carlae.cli").values())
+@with_plugins(get_group_named("gittr.cli").values())
 @click.group()
 def cli(args=None):
-    """carlae command-line-interface"""
+    """gittr command-line-interface"""
     return 0
 
 

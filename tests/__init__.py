@@ -1,1 +1,1 @@
-"""Unit test package for carlae.cli."""
+"""Unit test package for gittr.cli."""

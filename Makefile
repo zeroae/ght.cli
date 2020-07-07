@@ -28,7 +28,7 @@ help:
 
 init: ## Initializes the development environment
 	conda env update . || conda env create .
-	conda run -n carlae.cli-dev pre-commit install
+	conda run -n gittr.cli-dev pre-commit install
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
@@ -69,9 +69,9 @@ coverage: ## check code coverage quickly with the default Python
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/carlae.*.rst
+	rm -f docs/gittr.*.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ src/carlae
+	sphinx-apidoc -o docs/ src/gittr
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
@@ -89,7 +89,7 @@ dist: clean ## builds source and wheel package
 
 .PHONY: wheels
 wheels: dist  ## downloads wheel dependencies
-	pip download -f dist -d wheels carlae-cli
+	pip download -f dist -d wheels gittr-cli
 	ls -l wheels
 
 dist-conda:  ## builds conda-package

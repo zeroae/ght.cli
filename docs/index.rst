@@ -1,4 +1,4 @@
-Welcome to Carlae's CLI's documentation!
+Welcome to GIT Template Render (GITTR)'s documentation!
 ======================================
 
 .. toctree::
