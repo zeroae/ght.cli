@@ -1,10 +1,9 @@
 import os
-from collections import OrderedDict
 
 import pytest
 from git import Repo, Tree, Actor, Blob
 
-from gittr.cli.action import GHT, iterable_converged
+from gittr.cli.action import GHT
 
 
 @pytest.fixture()
@@ -58,17 +57,6 @@ def test_git_configure(ght):
     cr = ght.repo.config_reader()
     assert cr.get_value("user", "email") is not None
     assert cr.get_value("user", "name") is not None
-
-
-def test_iterable_converged():
-    foo = "foo"
-    bar = "bar"
-    foobar = "foobar"
-
-    assert iterable_converged(foo, foo)[0]
-    assert not iterable_converged(foo, bar)[0]
-    assert not iterable_converged(foo, foobar)[0]
-    assert not iterable_converged(foobar, foo)[0]
 
 
 def test_render_tree_structure(ght):
