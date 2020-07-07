@@ -4,7 +4,7 @@ from collections import OrderedDict
 import pytest
 from git import Repo, Tree, Actor, Blob
 
-from .action import GHT
+from gittr.cli.action import GHT, iterable_converged
 
 
 @pytest.fixture()
@@ -61,8 +61,6 @@ def test_git_configure(ght):
 
 
 def test_iterable_converged():
-    from .action import iterable_converged
-
     foo = "foo"
     bar = "bar"
     foobar = "foobar"
