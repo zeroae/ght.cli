@@ -51,33 +51,33 @@ conda_rosetta_stone = {
 setup_kwargs = dict(
     author="Patrick Sodré",
     author_email="psodre@gmail.com",
-    use_scm_version={"write_to": "src/carlae/cli/_version.py"},
+    use_scm_version={"write_to": "src/gittr/cli/_version.py"},
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    description="Carlae's CLI",
+    description="GIT Template Render (GITTR)",
     # fmt: off
     entry_points={
         "console_scripts": [
-            "carlae=carlae.cli.cli:cli",
+            "gittr=gittr.cli.cli:cli",
         ],
     },
     # fmt: on
     install_requires=requirements,
-    license="MIT",
+    license="BSD",
     long_description=readme,
     long_description_content_type="text/x-rst",
     include_package_data=True,
-    keywords="cli carlae",
-    name="carlae-cli",
+    keywords="cli gittr",
+    name="gittr-cli",
     package_dir={"": "src"},
     packages=find_namespace_packages(where="./src"),
     setup_requires=setup_requirements,
@@ -89,7 +89,7 @@ setup_kwargs = dict(
         "doc": doc_requirements
         # fmt: on
     },
-    url="https://github.com/zeroae/carlae.cli",
+    url="https://github.com/zeroae/gittr.cli",
     zip_safe=False,
 )
 
@@ -101,7 +101,7 @@ if "CONDA_BUILD_STATE" in os.environ:
         del setup_kwargs["use_scm_version"]
     except ModuleNotFoundError:
         print(
-            "Error: carlae.cli requires that setuptools_scm be installed with conda-build!"  # noqa: E501
+            "Error: gittr.cli requires that setuptools_scm be installed with conda-build!"  # noqa: E501
         )
         raise
     setup_kwargs["conda_rosetta_stone"] = conda_rosetta_stone

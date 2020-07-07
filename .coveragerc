@@ -1,7 +1,7 @@
 [run]
 branch = true
 source =
-    carlae.cli
+    gittr.cli
 
 [paths]
 source =
@@ -11,6 +11,6 @@ source =
 [report]
 omit =
     setup.py
-    src/carlae/cli/__main__.py
-    src/carlae/cli/_version.py
+    src/gittr/cli/__main__.py
+    src/gittr/cli/_version.py
     tests/*

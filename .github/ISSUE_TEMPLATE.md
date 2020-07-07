@@ -1,5 +1,5 @@
 ### Environment Information
-* Carlae's CLI version:
+* GIT Template Render (GITTR) version:
 * Python version:
 * Operating System:
 

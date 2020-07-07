@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/zeroae/carlae.cli/issues.
+Report bugs at https://github.com/zeroae/gittr.cli/issues.
 
 If you are reporting a bug, please include:
 
@@ -38,14 +38,14 @@ and "help wanted" is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-Carlae's CLI could always use more documentation, whether as part of the
-official Carlae's CLI docs, in docstrings, or even on the web in blog posts,
+GIT Template Render (GITTR) could always use more documentation, whether as part of the
+official GIT Template Render (GITTR) docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/zeroae/carlae.cli/issues.
+The best way to send feedback is to file an issue at https://github.com/zeroae/gittr.cli/issues.
 
 If you are proposing a feature:
 
@@ -57,18 +57,18 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `carlae.cli` for local development.
+Ready to contribute? Here's how to set up `gittr.cli` for local development.
 
-1. Fork the `carlae.cli` repo on GitHub.
+1. Fork the `gittr.cli` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/carlae.cli.git
+    $ git clone git@github.com:your_name_here/gittr.cli.git
 
 3. Install your local copy into a conda environment. Assuming you have conda installed, this is how you set up your fork for local development::
 
-    $ cd carlae.cli/
+    $ cd gittr.cli/
     $ make init
-    $ conda activate carlae.cli-dev
+    $ conda activate gittr.cli-dev
 
 4. Create a branch for local development, use the ``f-``, ``i-`` or ``chore-`` prefixes to auto-label your PR::
 
