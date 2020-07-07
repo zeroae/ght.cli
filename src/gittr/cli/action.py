@@ -2,12 +2,12 @@
 
 import os
 import sys
+import yaml
 from itertools import zip_longest
 from platform import release
 
-import yaml
 from jinja2 import Environment, FileSystemLoader, Template, TemplateNotFound
-from git import Repo, GitConfigParser, Remote, Blob, Object
+from git import Repo, GitConfigParser
 
 
 class RestrictedFileSystemLoader(FileSystemLoader):
@@ -45,11 +45,12 @@ class GHT(object):
     config: dict
     template_url: str
 
-    __slots__ = ["repo", "env", "config", "template_url"]
+    __slots__ = ["repo", "env", "config", "config_path", "template_url"]
 
-    def __init__(self, repo_path, template_url):
+    def __init__(self, repo_path, template_url, config_path=None):
         self.repo = Repo(path=repo_path)
         self.template_url = template_url
+        self.config_path = config_path or os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")
 
         self.env = Environment(
             loader=RestrictedFileSystemLoader(self.repo.working_tree_dir),
@@ -66,9 +67,10 @@ class GHT(object):
         self.configure_author()
 
     def load_config(self):
-        if not os.path.exists(ght_conf := os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")):
-            raise ValueError(f"{self.repo.working_tree_dir} is an invalid GHT repository. No .github/ght.yaml file found.")
-        with open(ght_conf, "r") as f:
+        if not os.path.exists(self.config_path):
+            raise ValueError(f"{self.repo.working_tree_dir} is an invalid GHT repository, "
+                             "{self.config_path} does not exist.")
+        with open(self.config_path, "r") as f:
             self.config = yaml.load(f, Loader=yaml.SafeLoader)
 
     def configure_author(self):
@@ -191,7 +193,8 @@ class GHT(object):
         repo.git.checkout("ght/master")
 
         if config:
-            os.makedirs(github_dir := os.path.join(path, ".github"), exist_ok=True)
+            github_dir = os.path.join(path, ".github")
+            os.makedirs(github_dir, exist_ok=True)
             with open(os.path.join(github_dir, 'ght.yaml'), 'w') as f:
                 yaml.dump(config, f)
             repo.index.add('.github/ght.yaml')
@@ -217,19 +220,3 @@ def commit_and_push():
     git commit -m "<something meaningful>"
     git push --set-upstream origin HEAD:${{ github.head_ref }} --force
     """
-
-
-def go():
-    template_url = sys.argv[1]
-    # sender = sys.argv[2]
-
-    # Setup the GHT Repository
-    ght = GHT(repo_path=".", template_url=template_url)
-    ght.render_tree()
-
-    #os.system('echo ::set-output name=reply::Hello %s!' % ght_url)
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(go())
