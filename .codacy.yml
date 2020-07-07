@@ -1,0 +1,8 @@
+---
+exclude_paths:
+  - '.github/**'
+  - 'src/carlae/cli/_version.py'
+  - 'tests/**/*'
+  - 'tests/*'
+  - 'benchmarks/**/*'
+  - 'setup.py'
