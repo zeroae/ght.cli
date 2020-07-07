@@ -1,7 +1,7 @@
 ---
 exclude_paths:
   - '.github/**'
-  - 'src/carlae/cli/_version.py'
+  - 'src/gittr/cli/_version.py'
   - 'tests/**/*'
   - 'tests/*'
   - 'benchmarks/**/*'

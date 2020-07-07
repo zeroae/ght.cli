@@ -1,5 +1,5 @@
 
-name: carlae.cli-dev
+name: gittr.cli-dev
 channels:
   - zeroae
   - conda-forge
