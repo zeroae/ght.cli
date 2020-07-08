@@ -31,9 +31,6 @@ class GHT(object):
                 "jinja2_time.TimeExtension"
             ]
         )
-
-        self.load_config()
-        self.fetch_template()
         self.configure_author()
 
     def load_config(self):
@@ -157,21 +154,38 @@ class GHT(object):
 
     @classmethod
     def init(cls, path, template_url, config: dict = None):
+        """
+        Step 1: Initialize the git repo
+        Step 2: Write the configuration file to master branch
+        Step 3: Get the ght/master branch ready for rendering
+        """
+        # Step 1: Initialize the git repo
         repo = Repo.init(path)
-        git_url, refspec = template_url.split("@")
-        repo.git.fetch(git_url, f"{refspec}:ght/master")
-        repo.git.checkout("ght/master")
 
-        if config:
+        ght = cls(repo_path=path, template_url=template_url)
+
+        # Step 2: Write the configuration file to the master branch
+        #   if config is a dict, then yaml.dump it
+        if config is None:
+            # Get the configuration file from the template URL
+            ght.fetch_template()
+            repo.git.checkout("ght/template", ".github/ght.yaml")
+            repo.git.branch("-D", "ght/template")
+        elif isinstance(config, dict):
             github_dir = os.path.join(path, ".github")
             os.makedirs(github_dir, exist_ok=True)
             with open(os.path.join(github_dir, 'ght.yaml'), 'w') as f:
                 yaml.dump(config, f)
             repo.index.add('.github/ght.yaml')
+        else:
+            raise ValueError("config must be None or a dictionary.")
+        repo.index.commit("[ght]: Add ght.yaml configuration.")
+        ght.load_config()
 
-        repo.index.commit("[ght]: Initial Commit")
+        # Step 3: Checkout the ght/master branch
+        repo.git.checkout("-b", "ght/master", "master")
 
-        return cls(repo_path=path, template_url=template_url)
+        return ght
 
 
 def commit_and_push():

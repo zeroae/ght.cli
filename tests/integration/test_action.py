@@ -50,6 +50,11 @@ def ght(tmpdir, template: Repo):
                    ))
     assert not ght.repo.bare
 
+    ght.fetch_template()
+    ght.load_config()
+    ght.prepare_tree_for_rendering()
+    ght.repo.index.commit("[ght]: imported ght/template")
+
     return ght
 
 
