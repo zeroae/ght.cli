@@ -65,7 +65,7 @@ class GHT(object):
 
     def fetch_template(self):
         ght_url, refspec = self.template_url.split("@")
-        self.repo.git.fetch(ght_url, f"{refspec}:ght/template")
+        self.repo.git.fetch(ght_url, "--no-tags", f"{refspec}:ght/template")
 
     def remove_all(self):
         """
