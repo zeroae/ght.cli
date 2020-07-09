@@ -113,9 +113,9 @@ class GHT(object):
         self.render_ght_conf()
         self.load_config()
         self.render_tree_content()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} content")
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} content", skip_hooks=True)
         self.render_tree_structure()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure")
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure", skip_hooks=True)
 
     def render_tree_structure(self):
         """
@@ -179,7 +179,7 @@ class GHT(object):
             repo.index.add('.github/ght.yaml')
         else:
             raise ValueError("config must be None or a dictionary.")
-        repo.index.commit("[ght]: Add ght.yaml configuration.")
+        repo.index.commit("[ght]: Add ght.yaml configuration.", skip_hooks=True)
         ght.load_config()
 
         # Step 3: Checkout the ght/master branch
