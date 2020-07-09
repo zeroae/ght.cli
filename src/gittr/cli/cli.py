@@ -39,40 +39,59 @@ def configure(repo_path):
 
     A git commit is created if the file is modified.
     """
-    import os
-
-    # Find the configuration file up the directory tree
-    while not os.path.isfile(f"{repo_path}/.github/ght.yaml"):
-        parent_dir = os.path.dirname(repo_path)
-        if parent_dir == repo_path:
-            raise click.UsageError("Not a gittr repository (or any of the parent directories): .github/ght.yaml")
-        repo_path = parent_dir
+    repo_path = resolve_repository_path(repo_path)
 
     # Open the repo
     ght = GHT(repo_path, None)
-
-    # Stash and checkout ght/master, on "fail/exit" pop the stash and
-    # come back to the previous branch
-    @contextmanager
-    def stashed_checkout(repo, branch_name):
-        prev_head = repo.head.reference
-
-        prev_stashed_items = len(repo.git.stash("list").splitlines())
-        repo.git.stash("push", "--all", "-m", "[ght]: Before editing configuration file.")
-        curr_num_stashed_items = len(repo.git.stash("list").splitlines())
-
-        repo.head.reference = repo.heads[branch_name]
-
-        yield
-
-        repo.head.reference = prev_head
-        if curr_num_stashed_items - prev_stashed_items > 0:
-            repo.git.stash("pop")
 
     with stashed_checkout(ght.repo, "ght/master"):
         click.edit(filename=f"{repo_path}/.github/ght.yaml")
         ght.repo.index.add(".github/ght.yaml")
         ght.repo.index.commit("[ght]: Update configuration file.", skip_hooks=True)
+
+
+@contextmanager
+def stashed_checkout(repo, branch_name):
+    with stashed(repo) as stash:
+        with checkout(repo, branch_name) as ref:
+            yield stash, ref
+
+
+@contextmanager
+def stashed(repo):
+    """A context that stashes all uncommitted/untracked items"""
+    prev_stashed_items = len(repo.git.stash("list").splitlines())
+    repo.git.stash("push", "--all", "-m", "[ght]: Before editing configuration file.")
+    curr_num_stashed_items = len(repo.git.stash("list").splitlines())
+
+    stash_created = curr_num_stashed_items - prev_stashed_items > 0
+
+    yield stash_created
+
+    if stash_created:
+        repo.git.stash("pop")
+
+
+@contextmanager
+def checkout(repo, branch_name):
+    """Branch checkout context"""
+    prev_head = repo.head.reference
+    repo.head.reference = repo.heads[branch_name]
+
+    yield repo.head.reference
+
+    repo.head.reference = prev_head
+
+
+def resolve_repository_path(repo_path):
+    # Find the configuration file up the directory tree
+    import os
+    while not os.path.isfile(f"{repo_path}/.github/ght.yaml"):
+        parent_dir = os.path.dirname(repo_path)
+        if parent_dir == repo_path:
+            raise click.UsageError("Not a gittr repository (or any of the parent directories): .github/ght.yaml")
+        repo_path = parent_dir
+    return repo_path
 
 
 @cli.command()
@@ -87,3 +106,20 @@ def render(template_url):
     ght.render_tree()
 
     return 0
+
+
+@cli.command("approve")
+@click.argument("repo-path", default=".", type=click.Path(file_okay=False, exists=True))
+@click.argument("commit", default="ght/master")
+def approve(repo_path, commit):
+    """Merge the rendered template from ght/master to master
+    """
+
+    repo_path = resolve_repository_path(repo_path)
+    ght = GHT(repo_path, None)
+
+    with stashed_checkout(ght.repo, "master"):
+        click.echo(ght.repo.git.merge("--no-squash", "--no-ff", commit))
+
+
+
