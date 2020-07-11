@@ -32,26 +32,33 @@ def cli():
 
 
 @cli.command("init")
-@click.argument("template-url", type=str, metavar="repository")
-@click.argument("template-ref", type=str, default="master", metavar="[refspec]")
-def init(template_url, template_ref):
-    """Initialize a git project from a template git url and refspec.
+@click.argument("repository", type=str)
+@click.argument("refspec", type=str, default="master", metavar="[REFSPEC]")
+def init(repository, refspec):
+    """Initialize a git project from a ght-template repository.
 
-    repository: the git-ght repository to use as a template
-    refspec: default value is `master`
+    \b
+    REPOSITORY: A git-url pointing to a ght-repository to use as a template.
+    REFSPEC: The git refspec to use. [default: master]
 
     \b
     This command will:
-      - Initialize the current working directory as repository with the gittr tracking branch
-      - Downloads the gittr template configuration file
-    The user can then configure the template with `gittr configure`
+      - Git-initialize the current working directory
+      - Download the ght template configuration file
+      - Create the ght/master tracking branch
+
+    \b
+    EXAMPLES:
+        $ mkdir example
+        $ cd example
+        $ ght init https://github.com/sodre/ght-pypackage master
     """
 
     if len(os.listdir(".")) > 0:
         raise click.ClickException("The current directory is not empty, refusing to initialize it.")
 
     # Setup the GHT Repository
-    _ = GHT.init(path=".", template_url=template_url, template_ref=template_ref)
+    _ = GHT.init(path=".", template_url=repository, template_ref=refspec)
 
     return 0
 
@@ -76,7 +83,7 @@ def configure(repo_path):
 
 @cli.command()
 @click.argument("refspec", default="master", metavar="[refspec]")
-@click.argument("dest_branch", default="ght/master", metavar="[ght branch]")
+@click.argument("dest-branch", default="ght/master", metavar="[ght branch]")
 def render(refspec, dest_branch):
     """(Re)render the project
 
