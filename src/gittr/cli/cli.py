@@ -83,10 +83,13 @@ def checkout(repo, branch_name):
 def resolve_repository_path(repo_path):
     # Find the configuration file up the directory tree
     import os
+
     while not os.path.isfile(f"{repo_path}/.github/ght.yaml"):
         parent_dir = os.path.dirname(repo_path)
         if parent_dir == repo_path:
-            raise click.UsageError("Not a gittr repository (or any of the parent directories): .github/ght.yaml")
+            raise click.UsageError(
+                "Not a gittr repository (or any of the parent directories): .github/ght.yaml"
+            )
         repo_path = parent_dir
     return repo_path
 
@@ -117,6 +120,3 @@ def approve(repo_path, commit):
 
     with stashed_checkout(ght.repo, "master"):
         click.echo(ght.repo.git.merge("--no-squash", "--no-ff", commit))
-
-
-

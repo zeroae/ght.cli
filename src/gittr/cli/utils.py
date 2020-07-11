@@ -34,10 +34,16 @@ class RestrictedFileSystemLoader(FileSystemLoader):
 
     @staticmethod
     def _ensure_not_unsafe_github(template):
-        if template.startswith(".github/") and not (template.endswith(".ght") or template.endswith(".j2")):
-            raise TemplateNotFound(f"Templates under the .github/ folder must end in .ght or j2: {template}")
+        if template.startswith(".github/") and not (
+            template.endswith(".ght") or template.endswith(".j2")
+        ):
+            raise TemplateNotFound(
+                f"Templates under the .github/ folder must end in .ght or j2: {template}"
+            )
 
     @staticmethod
     def _ensure_not_git(template):
         if template.startswith(".git/"):
-            raise TemplateNotFound(f"The .git folder is not a valid path for templates: {template}")
+            raise TemplateNotFound(
+                f"The .git folder is not a valid path for templates: {template}"
+            )

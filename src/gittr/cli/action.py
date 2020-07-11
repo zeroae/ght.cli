@@ -20,7 +20,9 @@ class GHT(object):
     def __init__(self, repo_path, template_url, config_path=None):
         self.repo = Repo(path=repo_path)
         self.template_url = template_url
-        self.config_path = config_path or os.path.join(self.repo.working_tree_dir, ".github", "ght.yaml")
+        self.config_path = config_path or os.path.join(
+            self.repo.working_tree_dir, ".github", "ght.yaml"
+        )
 
         self.env = Environment(
             loader=RestrictedFileSystemLoader(self.repo.working_tree_dir),
@@ -28,15 +30,17 @@ class GHT(object):
                 "jinja2.ext.do",
                 "jinja2.ext.loopcontrols",
                 "jinja2.ext.with_",
-                "jinja2_time.TimeExtension"
-            ]
+                "jinja2_time.TimeExtension",
+            ],
         )
         self.configure_author()
 
     def load_config(self):
         if not os.path.exists(self.config_path):
-            raise ValueError(f"{self.repo.working_tree_dir} is an invalid GHT repository, "
-                             "{self.config_path} does not exist.")
+            raise ValueError(
+                f"{self.repo.working_tree_dir} is an invalid GHT repository, "
+                "{self.config_path} does not exist."
+            )
         with open(self.config_path, "r") as f:
             self.config = yaml.load(f, Loader=yaml.SafeLoader)
 
@@ -76,17 +80,22 @@ class GHT(object):
         """
         Does the equivalent of `git rm -rf .`
         """
-        all_blobs = [o.path for o in self.repo.tree().traverse(
-            predicate=lambda i, _: i.type == "blob",
-            branch_first=False)]
+        all_blobs = [
+            o.path
+            for o in self.repo.tree().traverse(
+                predicate=lambda i, _: i.type == "blob", branch_first=False
+            )
+        ]
         for path in all_blobs:
             fs_path = os.path.join(self.repo.working_tree_dir, path)
             os.remove(fs_path)
         self.repo.index.remove(all_blobs)
-        all_trees = [o.path for o in self.repo.tree().traverse(
-            predicate=lambda i, _: i.type == "tree",
-            branch_first=False
-        )]
+        all_trees = [
+            o.path
+            for o in self.repo.tree().traverse(
+                predicate=lambda i, _: i.type == "tree", branch_first=False
+            )
+        ]
         all_trees.reverse()
         for path in all_trees:
             os.rmdir(os.path.join(self.repo.working_tree_dir, path))
@@ -103,10 +112,11 @@ class GHT(object):
 
         converged, index = False, -1
         while not converged:
-            curr_ght_yaml = next_ght_yaml[:index+1] + curr_ght_yaml[index+1:]
+            curr_ght_yaml = next_ght_yaml[: index + 1] + curr_ght_yaml[index + 1 :]
             config = yaml.safe_load("\n".join(curr_ght_yaml))
-            next_ght_yaml = [self.env.from_string(line).render(config)
-                             for line in curr_ght_yaml]
+            next_ght_yaml = [
+                self.env.from_string(line).render(config) for line in curr_ght_yaml
+            ]
             converged, index = iterable_converged(curr_ght_yaml, next_ght_yaml)
 
         with open(ght_conf_path, "w") as f:
@@ -118,17 +128,23 @@ class GHT(object):
         self.render_ght_conf()
         self.load_config()
         self.render_tree_content()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} content", skip_hooks=True)
+        self.repo.index.commit(
+            f"[ght]: rendered {self.template_url} content", skip_hooks=True
+        )
         self.render_tree_structure()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure", skip_hooks=True)
+        self.repo.index.commit(
+            f"[ght]: rendered {self.template_url} structure", skip_hooks=True
+        )
 
     def render_tree_structure(self):
         """
         Renders the Tree structure in git, by applying `render_ght_obj_name` to each object name.
         """
-        objs_to_rename = [(o.path, os.path.join(os.path.dirname(o.path), new_name))
-                          for o in self.repo.tree().traverse(branch_first=False)
-                          if o.name != (new_name := self.render_ght_obj_name(o.name))]
+        objs_to_rename = [
+            (o.path, os.path.join(os.path.dirname(o.path), new_name))
+            for o in self.repo.tree().traverse(branch_first=False)
+            if o.name != (new_name := self.render_ght_obj_name(o.name))
+        ]
         objs_to_rename.reverse()
 
         for old_new in objs_to_rename:
@@ -146,9 +162,11 @@ class GHT(object):
         """
         Render all tree content
         """
-        paths_to_render = [o.path for _, o in
-                           self.repo.index.iter_blobs()
-                           if not o.path.startswith(".github/") or o.path.endswith(".ght")]
+        paths_to_render = [
+            o.path
+            for _, o in self.repo.index.iter_blobs()
+            if not o.path.startswith(".github/") or o.path.endswith(".ght")
+        ]
 
         for path in paths_to_render:
             template: Template = self.env.get_template(path)
@@ -178,9 +196,9 @@ class GHT(object):
         elif isinstance(config, dict):
             github_dir = os.path.join(path, ".github")
             os.makedirs(github_dir, exist_ok=True)
-            with open(os.path.join(github_dir, 'ght.yaml'), 'w') as f:
+            with open(os.path.join(github_dir, "ght.yaml"), "w") as f:
                 yaml.dump(config, f)
-            repo.index.add('.github/ght.yaml')
+            repo.index.add(".github/ght.yaml")
         else:
             raise ValueError("config must be None or a dictionary.")
         repo.index.commit("[ght]: Add ght.yaml configuration.", skip_hooks=True)
