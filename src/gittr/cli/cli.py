@@ -1,15 +1,30 @@
 """Console script for gittr."""
 
-from contextlib import contextmanager
+import collections
 
 import click
 from click_plugins import with_plugins
 from entrypoints import get_group_named
+
 from gittr.cli.action import GHT
+from gittr.cli.utils import stashed_checkout, resolve_repository_path
+
+
+class OrderedGroup(click.Group):
+    """A click group that maintains order.
+    ref: https://bit.ly/click-ordered-group
+    """
+
+    def __init__(self, name=None, commands=None, **attrs):
+        super(OrderedGroup, self).__init__(name, commands, **attrs)
+        self.commands = commands or collections.OrderedDict()
+
+    def list_commands(self, ctx):
+        return self.commands
 
 
 @with_plugins(get_group_named("gittr").values())
-@click.group()
+@click.group(cls=OrderedGroup)
 def cli():
     """gittr command-line-interface"""
     return 0
@@ -17,17 +32,23 @@ def cli():
 
 @cli.command("init")
 @click.argument("repository-path", type=click.Path(exists=False))
-@click.argument("template-url")
-def init(repository_path, template_url):
-    """Initialize a git project from a template url.
-    This creates the repository directory,
-    initializes the git repository with the gittr tracking branches,
-    downloads the gittr template configuration file,
-    and opens it for editing.
+@click.argument("template-url", type=str, metavar="repository")
+@click.argument("template-ref", type=str, default="master", metavar="[refspec]")
+def init(repository_path, template_url, template_ref):
+    """Initialize a git project from a template git url and refspec.
+
+    repository: the git-ght repository to use as a template
+    refspec: default value is `master`
+
+    \b
+    This command will:
+      - Initialize the current working directory as repository with the gittr tracking branch
+      - Downloads the gittr template configuration file
+    The user can then configure the template with `gittr configure`
     """
 
     # Setup the GHT Repository
-    _ = GHT.init(path=repository_path, template_url=template_url)
+    _ = GHT.init(path=repository_path, template_url=template_url, template_ref=template_ref)
 
     return 0
 
@@ -50,57 +71,23 @@ def configure(repo_path):
         ght.repo.index.commit("[ght]: Update configuration file.", skip_hooks=True)
 
 
-@contextmanager
-def stashed_checkout(repo, branch_name):
-    with stashed(repo) as stash:
-        with checkout(repo, branch_name) as ref:
-            yield stash, ref
-
-
-@contextmanager
-def stashed(repo):
-    """A context that stashes all uncommitted/untracked items"""
-    prev_stashed_items = len(repo.git.stash("list").splitlines())
-    repo.git.stash("push", "--all", "-m", "[ght]: Before editing configuration file.")
-    curr_num_stashed_items = len(repo.git.stash("list").splitlines())
-
-    stash_created = curr_num_stashed_items - prev_stashed_items > 0
-
-    yield stash_created
-
-    if stash_created:
-        repo.git.stash("pop")
-
-
-@contextmanager
-def checkout(repo, branch_name):
-    """Branch checkout context"""
-    prev_head = repo.head.ref
-    yield repo.heads[branch_name].checkout()
-    prev_head.checkout()
-
-
-def resolve_repository_path(repo_path):
-    # Find the configuration file up the directory tree
-    import os
-
-    while not os.path.isfile(f"{repo_path}/.github/ght.yaml"):
-        parent_dir = os.path.dirname(repo_path)
-        if parent_dir == repo_path:
-            raise click.UsageError(
-                "Not a gittr repository (or any of the parent directories): .github/ght.yaml"
-            )
-        repo_path = parent_dir
-    return repo_path
-
-
 @cli.command()
-@click.argument("template_url")
-def render(template_url):
-    """(Re)render an existing project"""
+@click.argument("refspec", default="master", metavar="[refspec]")
+def render(refspec):
+    """(Re)render an existing project.
+
+    \b
+    refspec: The template branch/refspec to use for rendering [default=master]
+    """
 
     # Setup the GHT Repository
-    ght = GHT(repo_path=".", template_url=template_url)
+    ght = GHT(repo_path=".", template_ref=refspec)
+    active_branch_name = ght.repo.active_branch.name
+    if not active_branch_name.startswith("ght/"):
+        raise click.ClickException(
+            "Refusing to render the template."
+            f"The active branch `{active_branch_name}` does not begin "
+        )
     ght.load_config()
     ght.render_tree()
 
