@@ -14,12 +14,14 @@ class GHT(object):
     env: Environment
     config: dict
     template_url: str
+    template_ref: str
 
-    __slots__ = ["repo", "env", "config", "config_path", "template_url"]
+    __slots__ = ["repo", "env", "config", "config_path", "template_url", "template_ref"]
 
-    def __init__(self, repo_path, template_url, config_path=None):
+    def __init__(self, repo_path, template_url=None, template_ref="master", config_path=None):
         self.repo = Repo(path=repo_path)
         self.template_url = template_url
+        self.template_ref = template_ref
         self.config_path = config_path or os.path.join(
             self.repo.working_tree_dir, ".github", "ght.yaml"
         )
@@ -43,6 +45,8 @@ class GHT(object):
             )
         with open(self.config_path, "r") as f:
             self.config = yaml.load(f, Loader=yaml.SafeLoader)
+            self.template_url = self.template_url or self.config["ght"]["template"]["url"]
+            self.template_ref = self.template_ref or self.config["ght"]["template"]["ref"]
 
     def configure_author(self):
         """
@@ -71,8 +75,7 @@ class GHT(object):
 
     @contextmanager
     def fetch_template(self):
-        ght_url, refspec = self.template_url.split("@")
-        self.repo.git.fetch(ght_url, "--no-tags", f"{refspec}:ght/template")
+        self.repo.git.fetch(self.template_url, "--no-tags", f"{self.template_ref}:ght/template")
         yield
         self.repo.git.branch("-D", "ght/template")
 
@@ -170,7 +173,7 @@ class GHT(object):
             self.repo.index.add(path)
 
     @classmethod
-    def init(cls, path, template_url, config: dict = None):
+    def init(cls, path, config: dict = None, **kwargs):
         """
         Step 1: Initialize the git repo
         Step 2: Write the configuration file to master branch
@@ -179,7 +182,7 @@ class GHT(object):
         # Step 1: Initialize the git repo
         repo = Repo.init(path)
 
-        ght = cls(repo_path=path, template_url=template_url)
+        ght = cls(repo_path=path, **kwargs)
 
         # Step 2: Write the configuration file to the master branch
         #   if config is a dict, then yaml.dump it
@@ -202,10 +205,3 @@ class GHT(object):
         repo.git.checkout("-b", "ght/master", "master")
 
         return ght
-
-
-def commit_and_push():
-    """
-    git commit -m "<something meaningful>"
-    git push --set-upstream origin HEAD:${{ github.head_ref }} --force
-    """

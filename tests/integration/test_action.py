@@ -38,9 +38,9 @@ def template(tmpdir):
 def ght(tmpdir, template: Repo):
     ght = GHT.init(
         path=os.path.join(tmpdir, "ght"),
-        template_url=f"file://{template.working_tree_dir}@master",
         config=dict(
             ght=dict(
+                template=dict(url=f"file://{template.working_tree_dir}", ref="master"),
                 hello="Hello World!",
                 a="alpha",
                 b="beta",
