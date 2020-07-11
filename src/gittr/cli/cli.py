@@ -63,9 +63,9 @@ def configure(repo_path):
 
     A git commit is created if the file is modified.
     """
-    repo_path = resolve_repository_path(repo_path)
 
     # Open the repo
+    repo_path = resolve_repository_path(repo_path)
     ght = GHT(repo_path, None)
 
     with stashed_checkout(ght.repo, "ght/master"):
@@ -83,8 +83,9 @@ def render(refspec):
     refspec: The template branch/refspec to use for rendering [default=master]
     """
 
-    # Setup the GHT Repository
-    ght = GHT(repo_path=".", template_ref=refspec)
+    repo_path = resolve_repository_path(".")
+    ght = GHT(repo_path=repo_path, template_ref=refspec)
+
     active_branch_name = ght.repo.active_branch.name
     if not active_branch_name.startswith("ght/"):
         raise click.ClickException(
@@ -98,14 +99,13 @@ def render(refspec):
 
 
 @cli.command("approve")
-@click.argument("repo-path", default=".", type=click.Path(file_okay=False, exists=True))
 @click.argument("commit", default="ght/master")
-def approve(repo_path, commit):
+def approve(commit):
     """Merge the rendered template from ght/master to master
     """
 
-    repo_path = resolve_repository_path(repo_path)
-    ght = GHT(repo_path, None)
+    repo_path = resolve_repository_path(".")
+    ght = GHT(repo_path=repo_path)
 
     with stashed_checkout(ght.repo, "master"):
         click.echo(ght.repo.git.merge("--no-squash", "--no-ff", commit))

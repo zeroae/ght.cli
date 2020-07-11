@@ -57,6 +57,7 @@ class GHT(object):
         with self.repo.config_writer() as cw:
             cw.set_value("user", "email", "psodre@gmail.com")
             cw.set_value("user", "name", "Patrick Sodré")
+        # call release() to be sure changes are written and locks are released
         release()
 
     def prepare_tree_for_rendering(self):
@@ -177,7 +178,7 @@ class GHT(object):
         """
         Step 1: Initialize the git repo
         Step 2: Write the configuration file to master branch
-        Step 3: Get the ght/master branch ready for rendering
+        Step 3: Create the ght/master branch from master
         """
         # Step 1: Initialize the git repo
         repo = Repo.init(path)
@@ -201,7 +202,7 @@ class GHT(object):
         repo.index.commit("[ght]: Add ght.yaml configuration.", skip_hooks=True)
         ght.load_config()
 
-        # Step 3: Checkout the ght/master branch
-        repo.git.checkout("-b", "ght/master", "master")
+        # Step 3: Create the ght/master branch
+        repo.create_head("ght/master")
 
         return ght
