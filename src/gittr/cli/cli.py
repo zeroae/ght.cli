@@ -75,12 +75,9 @@ def stashed(repo):
 @contextmanager
 def checkout(repo, branch_name):
     """Branch checkout context"""
-    prev_head = repo.head.reference
-    repo.head.reference = repo.heads[branch_name]
-
-    yield repo.head.reference
-
-    repo.head.reference = prev_head
+    prev_head = repo.head.ref
+    yield repo.heads[branch_name].checkout()
+    prev_head.checkout()
 
 
 def resolve_repository_path(repo_path):
