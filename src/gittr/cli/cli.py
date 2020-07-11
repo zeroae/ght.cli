@@ -48,7 +48,7 @@ def init(template_url, template_ref):
     """
 
     if len(os.listdir(".")) > 0:
-        raise click.ClickException("Refusing to initialize in a non-empty directory")
+        raise click.ClickException("The current directory is not empty, refusing to initialize it.")
 
     # Setup the GHT Repository
     _ = GHT.init(path=".", template_url=template_url, template_ref=template_ref)
@@ -76,24 +76,26 @@ def configure(repo_path):
 
 @cli.command()
 @click.argument("refspec", default="master", metavar="[refspec]")
-def render(refspec):
-    """(Re)render an existing project.
+@click.argument("dest_branch", default="ght/master", metavar="[ght branch]")
+def render(refspec, dest_branch):
+    """(Re)render the project
 
     \b
     refspec: The template branch/refspec to use for rendering [default=master]
+    ght branch: The destination branch of the rendered results [default=ght/master]
     """
+    if not dest_branch.startswith("ght/"):
+        raise click.ClickException(
+            "Refusing to render the template."
+            f"The destination branch `{dest_branch}` does not begin ght/."
+        )
 
     repo_path = resolve_repository_path(".")
     ght = GHT(repo_path=repo_path, template_ref=refspec)
 
-    active_branch_name = ght.repo.active_branch.name
-    if not active_branch_name.startswith("ght/"):
-        raise click.ClickException(
-            "Refusing to render the template."
-            f"The active branch `{active_branch_name}` does not begin "
-        )
-    ght.load_config()
-    ght.render_tree()
+    with stashed_checkout(ght.repo, dest_branch):
+        ght.load_config()
+        ght.render_tree()
 
     return 0
 
