@@ -102,8 +102,8 @@ def render(template_url):
     # Setup the GHT Repository
     ght = GHT(repo_path=".", template_url=template_url)
     ght.load_config()
-    ght.fetch_template()
-    ght.render_tree()
+    with ght.fetch_template():
+        ght.render_tree()
 
     return 0
 

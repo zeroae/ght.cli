@@ -90,10 +90,12 @@ def test_ght_create_jinja2_environment(ght: GHT):
 def test_prepare_tree_for_rendering(ght: GHT):
     ght.prepare_tree_for_rendering()
     assert ght.repo.active_branch == ght.repo.heads["ght/master"]
+    assert "ght/template" not in ght.repo.heads
 
 
 def test_render_tree(ght: GHT):
     ght.render_tree()
+    assert "ght/template" not in ght.repo.heads
 
 
 def test_render_ght_conf(ght: GHT):
