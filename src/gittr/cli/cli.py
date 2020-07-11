@@ -1,6 +1,7 @@
 """Console script for gittr."""
 
 import collections
+import os
 
 import click
 from click_plugins import with_plugins
@@ -31,10 +32,9 @@ def cli():
 
 
 @cli.command("init")
-@click.argument("repository-path", type=click.Path(exists=False))
 @click.argument("template-url", type=str, metavar="repository")
 @click.argument("template-ref", type=str, default="master", metavar="[refspec]")
-def init(repository_path, template_url, template_ref):
+def init(template_url, template_ref):
     """Initialize a git project from a template git url and refspec.
 
     repository: the git-ght repository to use as a template
@@ -47,8 +47,11 @@ def init(repository_path, template_url, template_ref):
     The user can then configure the template with `gittr configure`
     """
 
+    if len(os.listdir(".")) > 0:
+        raise click.ClickException("Refusing to initialize in a non-empty directory")
+
     # Setup the GHT Repository
-    _ = GHT.init(path=repository_path, template_url=template_url, template_ref=template_ref)
+    _ = GHT.init(path=".", template_url=template_url, template_ref=template_ref)
 
     return 0
 
