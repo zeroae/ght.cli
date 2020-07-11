@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+from contextlib import contextmanager
+
 import yaml
 from platform import release
 
@@ -63,9 +65,12 @@ class GHT(object):
 
         self.repo.git.checkout("HEAD", "--", ".github/ght.yaml")
 
+    @contextmanager
     def fetch_template(self):
         ght_url, refspec = self.template_url.split("@")
         self.repo.git.fetch(ght_url, "--no-tags", f"{refspec}:ght/template")
+        yield
+        self.repo.git.branch("-D", "ght/template")
 
     def remove_all(self):
         """
@@ -168,9 +173,8 @@ class GHT(object):
         #   if config is a dict, then yaml.dump it
         if config is None:
             # Get the configuration file from the template URL
-            ght.fetch_template()
-            repo.git.checkout("ght/template", ".github/ght.yaml")
-            repo.git.branch("-D", "ght/template")
+            with ght.fetch_template():
+                repo.git.checkout("ght/template", ".github/ght.yaml")
         elif isinstance(config, dict):
             github_dir = os.path.join(path, ".github")
             os.makedirs(github_dir, exist_ok=True)
