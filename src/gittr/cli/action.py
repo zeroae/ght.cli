@@ -112,11 +112,9 @@ class GHT(object):
 
         converged, index = False, -1
         while not converged:
-            curr_ght_yaml = next_ght_yaml[: index + 1] + curr_ght_yaml[index + 1 :]
+            curr_ght_yaml = next_ght_yaml[: index + 1] + curr_ght_yaml[index + 1 :]  # noqa: E203
             config = yaml.safe_load("\n".join(curr_ght_yaml))
-            next_ght_yaml = [
-                self.env.from_string(line).render(config) for line in curr_ght_yaml
-            ]
+            next_ght_yaml = [self.env.from_string(line).render(config) for line in curr_ght_yaml]
             converged, index = iterable_converged(curr_ght_yaml, next_ght_yaml)
 
         with open(ght_conf_path, "w") as f:
@@ -128,13 +126,9 @@ class GHT(object):
         self.render_ght_conf()
         self.load_config()
         self.render_tree_content()
-        self.repo.index.commit(
-            f"[ght]: rendered {self.template_url} content", skip_hooks=True
-        )
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} content", skip_hooks=True)
         self.render_tree_structure()
-        self.repo.index.commit(
-            f"[ght]: rendered {self.template_url} structure", skip_hooks=True
-        )
+        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure", skip_hooks=True)
 
     def render_tree_structure(self):
         """

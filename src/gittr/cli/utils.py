@@ -8,8 +8,8 @@ def iterable_converged(left, right):
     Returns True, None if the two iterables generate identical, False, index otherwise.
     The index indicates the first position where the iterables differ
     """
-    for i, (l, r) in enumerate(zip_longest(left, right)):
-        if l != r:
+    for i, (l_item, r_item) in enumerate(zip_longest(left, right)):
+        if l_item != r_item:
             return False, i
     return True, None
 
@@ -44,6 +44,4 @@ class RestrictedFileSystemLoader(FileSystemLoader):
     @staticmethod
     def _ensure_not_git(template):
         if template.startswith(".git/"):
-            raise TemplateNotFound(
-                f"The .git folder is not a valid path for templates: {template}"
-            )
+            raise TemplateNotFound(f"The .git folder is not a valid path for templates: {template}")
