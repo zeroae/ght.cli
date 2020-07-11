@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/zeroae/gittr.cli/issues.
+Report bugs at https://github.com/zeroae/gittr/issues.
 
 If you are reporting a bug, please include:
 
@@ -45,7 +45,7 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/zeroae/gittr.cli/issues.
+The best way to send feedback is to file an issue at https://github.com/zeroae/gittr/issues.
 
 If you are proposing a feature:
 
@@ -57,18 +57,18 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `gittr.cli` for local development.
+Ready to contribute? Here's how to set up `gittr` for local development.
 
-1. Fork the `gittr.cli` repo on GitHub.
+1. Fork the `gittr` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/gittr.cli.git
+    $ git clone git@github.com:your_name_here/gittr.git
 
 3. Install your local copy into a conda environment. Assuming you have conda installed, this is how you set up your fork for local development::
 
-    $ cd gittr.cli/
+    $ cd gittr/
     $ make init
-    $ conda activate gittr.cli-dev
+    $ conda activate gittr-dev
 
 4. Create a branch for local development, use the ``f-``, ``i-`` or ``chore-`` prefixes to auto-label your PR::
 
