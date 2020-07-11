@@ -72,6 +72,7 @@ setup_kwargs = dict(
     entry_points={
         "console_scripts": [
             "gittr=gittr.cli.__main__:cli",
+            "ght=gittr.cli.__main__:cli",
         ],
     },
     # fmt: on
