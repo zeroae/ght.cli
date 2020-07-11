@@ -20,12 +20,12 @@ def template(tmpdir):
 
     charlie = os.path.join(repo.working_tree_dir, "{{ght.a}}", "{{ght.b}}", "{{ght.c}}")
     os.makedirs(os.path.dirname(charlie), exist_ok=True)
-    open(charlie, 'w').close()
+    open(charlie, "w").close()
     repo.index.add([charlie])
 
     carlos = os.path.join(repo.working_tree_dir, "{{ght.a}}", "{{ght.b}}", "carlos")
     os.makedirs(os.path.dirname(carlos), exist_ok=True)
-    open(carlos, 'w').close()
+    open(carlos, "w").close()
     repo.index.add([carlos])
 
     author = Actor("GHT Author", "author@example.com")
@@ -36,18 +36,20 @@ def template(tmpdir):
 
 @pytest.fixture()
 def ght(tmpdir, template: Repo):
-    ght = GHT.init(path=os.path.join(tmpdir, "ght"),
-                   template_url=f"file://{template.working_tree_dir}@master",
-                   config=dict(
-                       ght=dict(
-                           hello="Hello World!",
-                           a="alpha",
-                           b="beta",
-                           c="charlie",
-                           abc="{{ght.a}}/{{ght.b}}/{{ght.c}}",
-                           abcd="{{ght.abc}}/delta"
-                       )
-                   ))
+    ght = GHT.init(
+        path=os.path.join(tmpdir, "ght"),
+        template_url=f"file://{template.working_tree_dir}@master",
+        config=dict(
+            ght=dict(
+                hello="Hello World!",
+                a="alpha",
+                b="beta",
+                c="charlie",
+                abc="{{ght.a}}/{{ght.b}}/{{ght.c}}",
+                abcd="{{ght.abc}}/delta",
+            )
+        ),
+    )
     assert not ght.repo.bare
 
     ght.fetch_template()
