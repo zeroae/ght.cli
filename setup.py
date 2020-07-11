@@ -94,7 +94,7 @@ setup_kwargs = dict(
         "doc": doc_requirements
         # fmt: on
     },
-    url="https://github.com/zeroae/gittr.cli",
+    url="https://github.com/zeroae/gittr",
     zip_safe=False,
 )
 

@@ -12,7 +12,7 @@ To install GIT Template Render (GITTR), run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install gittr.cli
+    $ pip install gittr
 
 This is the preferred method to install GIT Template Render (GITTR), as it will always install the most recent stable release.
 
@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/sodre/gittr.cli
+    $ git clone git://github.com/sodre/gittr
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/sodre/gittr.cli/tarball/master
+    $ curl -OJL https://github.com/sodre/gittr/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/zeroae/gittr.cli
-.. _tarball: https://github.com/zeroae/gittr.cli/tarball/master
+.. _Github repo: https://github.com/zeroae/gittr
+.. _tarball: https://github.com/zeroae/gittr/tarball/master
