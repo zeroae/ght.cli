@@ -57,11 +57,13 @@ class GHT(object):
         """
         git rm -rf .
         git checkout ght/template -- .
+        git branch -D ght/template
         git checkout HEAD -- .github/ght.yaml
         """
         self.remove_all()
 
-        self.repo.git.checkout("ght/template", "--", ".")
+        with self.fetch_template():
+            self.repo.git.checkout("ght/template", "--", ".")
 
         self.repo.git.checkout("HEAD", "--", ".github/ght.yaml")
 
