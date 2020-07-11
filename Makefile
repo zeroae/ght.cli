@@ -28,7 +28,7 @@ help:
 
 init: ## Initializes the development environment
 	conda env update . || conda env create .
-	conda run -n gittr.cli-dev pre-commit install
+	conda run -n gittr-dev pre-commit install
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
