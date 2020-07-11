@@ -1,3 +1,5 @@
+import os
+
 from contextlib import contextmanager
 from itertools import zip_longest
 
@@ -7,8 +9,9 @@ from jinja2 import FileSystemLoader, TemplateNotFound
 
 def iterable_converged(left, right):
     """
-    Returns True, None if the two iterables generate identical, False, index otherwise.
-    The index indicates the first position where the iterables differ
+    Returns (True, None) if the two iterables generate identical,
+    otherwise returns (False, index) where index indicates the first position where
+    the iterables differ.
     """
     for i, (l_item, r_item) in enumerate(zip_longest(left, right)):
         if l_item != r_item:
@@ -81,8 +84,6 @@ def checkout(repo, branch_name):
 
 def resolve_repository_path(repo_path):
     # Find the configuration file up the directory tree
-    import os
-
     while not os.path.isfile(f"{repo_path}/.github/ght.yaml"):
         parent_dir = os.path.dirname(repo_path)
         if parent_dir == repo_path:
