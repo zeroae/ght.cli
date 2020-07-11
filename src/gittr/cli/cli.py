@@ -82,14 +82,14 @@ def configure(repo_path):
 
 
 @cli.command()
-@click.argument("refspec", default="master", metavar="[refspec]")
-@click.argument("dest-branch", default="ght/master", metavar="[ght branch]")
+@click.argument("refspec", default="master", metavar="[REFSPEC]")
+@click.argument("dest-branch", default="ght/master", metavar="[GHT_BRANCH]")
 def render(refspec, dest_branch):
     """(Re)render the project
 
     \b
-    refspec: The template branch/refspec to use for rendering [default=master]
-    ght branch: The destination branch of the rendered results [default=ght/master]
+    REFSPEC: The template branch/refspec to use for rendering [default=master]
+    GHT_BRANCH: The destination branch of the rendered results [default=ght/master]
     """
     if not dest_branch.startswith("ght/"):
         raise click.ClickException(
