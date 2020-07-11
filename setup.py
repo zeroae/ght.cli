@@ -56,7 +56,7 @@ setup_kwargs = dict(
     author="Patrick Sodré",
     author_email="psodre@gmail.com",
     use_scm_version={"write_to": "src/gittr/cli/_version.py"},
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
