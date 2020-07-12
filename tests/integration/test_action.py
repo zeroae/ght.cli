@@ -62,8 +62,9 @@ def ght(tmpdir, template: Repo):
 
 def test_git_configure(ght):
     cr = ght.repo.config_reader()
-    assert cr.get_value("user", "email") is not None
-    assert cr.get_value("user", "name") is not None
+    if cr.has_section("user"):
+        assert cr.get_value("user", "email") == ght.author.email
+        assert cr.get_value("user", "name") == ght.author.name
 
 
 def test_render_tree_structure(ght):
