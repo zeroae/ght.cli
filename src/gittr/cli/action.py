@@ -45,7 +45,9 @@ class GHT(object):
             )
         with open(self.config_path, "r") as f:
             self.config = yaml.load(f, Loader=yaml.SafeLoader)
-            self.template_url = self.template_url or self.config["ght"]["template"]["url"]
+            self.template_url = self.template_url or self.config["ght"].get("template", {}).get(
+                "url", None
+            )
 
     def configure_author(self):
         """

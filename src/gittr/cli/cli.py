@@ -82,10 +82,11 @@ def configure(repo_path):
 
 
 @cli.command()
+@click.option("-url", "-u", default=None, help="The upstream template url. [default: from config]")
 @click.argument("refspec", default="master", metavar="[REFSPEC]")
 @click.argument("dest-branch", default="ght/master", metavar="[GHT_BRANCH]")
-def render(refspec, dest_branch):
-    """(Re)render the project
+def render(url, refspec, dest_branch):
+    """Render the template.
 
     \b
     REFSPEC: The template branch/refspec to use for rendering [default=master]
@@ -98,10 +99,15 @@ def render(refspec, dest_branch):
         )
 
     repo_path = resolve_repository_path(".")
-    ght = GHT(repo_path=repo_path, template_ref=refspec)
+    ght = GHT(repo_path=repo_path, template_url=url, template_ref=refspec)
+    ght.load_config()
+
+    if ght.template_url is None:
+        raise click.ClickException(
+            "Could not detect the template repository url. " "Please set it manually with -u/--url"
+        )
 
     with stashed_checkout(ght.repo, dest_branch):
-        ght.load_config()
         ght.render_tree()
 
     return 0
