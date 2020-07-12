@@ -2,11 +2,10 @@ import os
 from contextlib import contextmanager
 
 import yaml
-from platform import release
 
 from gittr.cli.utils import iterable_converged, RestrictedFileSystemLoader
 from jinja2 import Environment, Template
-from git import Repo, GitConfigParser
+from git import Repo, Actor
 
 
 class GHT(object):
@@ -16,7 +15,16 @@ class GHT(object):
     template_url: str
     template_ref: str
 
-    __slots__ = ["repo", "env", "config", "config_path", "template_url", "template_ref"]
+    __slots__ = [
+        "repo",
+        "env",
+        "author",
+        "committer",
+        "config",
+        "config_path",
+        "template_url",
+        "template_ref",
+    ]
 
     def __init__(self, repo_path, template_url=None, template_ref="master", config_path=None):
         self.repo = Repo(path=repo_path)
@@ -25,6 +33,9 @@ class GHT(object):
         self.config_path = config_path or os.path.join(
             self.repo.working_tree_dir, ".github", "ght.yaml"
         )
+
+        self.committer = Actor("GHT", "ght@zero-ae.com")
+        self.author = self.committer
 
         self.env = Environment(
             loader=RestrictedFileSystemLoader(self.repo.working_tree_dir),
@@ -35,7 +46,6 @@ class GHT(object):
                 "jinja2_time.TimeExtension",
             ],
         )
-        self.configure_author()
 
     def load_config(self):
         if not os.path.exists(self.config_path):
@@ -44,22 +54,14 @@ class GHT(object):
                 "{self.config_path} does not exist."
             )
         with open(self.config_path, "r") as f:
-            self.config = yaml.load(f, Loader=yaml.SafeLoader)
+            self.config = yaml.safe_load(f)
             self.template_url = self.template_url or self.config["ght"].get("template", {}).get(
                 "url", None
             )
-
-    def configure_author(self):
-        """
-        git config --local user.email ""
-        git config --local user.name ""
-        """
-        cw: GitConfigParser
-        with self.repo.config_writer() as cw:
-            cw.set_value("user", "email", "psodre@gmail.com")
-            cw.set_value("user", "name", "Patrick Sodré")
-        # call release() to be sure changes are written and locks are released
-        release()
+        with self.repo.config_reader() as cr:
+            if cr.has_section("user"):
+                if cr.has_option("user", "name") and cr.has_option("user", "email"):
+                    self.author = Actor(cr.get_value("user", "name"), cr.get_value("user", "email"))
 
     def prepare_tree_for_rendering(self):
         """
@@ -131,9 +133,19 @@ class GHT(object):
         self.render_ght_conf()
         self.load_config()
         self.render_tree_content()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} content", skip_hooks=True)
+        self.repo.index.commit(
+            f"[ght]: rendered {self.template_url} content",
+            skip_hooks=True,
+            author=self.author,
+            committer=self.committer,
+        )
         self.render_tree_structure()
-        self.repo.index.commit(f"[ght]: rendered {self.template_url} structure", skip_hooks=True)
+        self.repo.index.commit(
+            f"[ght]: rendered {self.template_url} structure",
+            skip_hooks=True,
+            author=self.author,
+            committer=self.committer,
+        )
 
     def render_tree_structure(self):
         """
@@ -200,7 +212,12 @@ class GHT(object):
             repo.index.add(".github/ght.yaml")
         else:
             raise ValueError("config must be None or a dictionary.")
-        repo.index.commit("[ght]: Add ght.yaml configuration.", skip_hooks=True)
+        repo.index.commit(
+            "[ght]: Add ght.yaml configuration.",
+            skip_hooks=True,
+            author=ght.author,
+            committer=ght.committer,
+        )
         ght.load_config()
 
         # Step 3: Create the ght/master branch
