@@ -1,4 +1,4 @@
-"""Console script for gittr."""
+"""Console script for ght."""
 
 import sys
 import click

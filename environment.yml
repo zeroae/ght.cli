@@ -1,5 +1,5 @@
 
-name: gittr-dev
+name: ght-dev
 channels:
   - zeroae
   - conda-forge

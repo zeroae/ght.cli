@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# gittr documentation build configuration file, created by
+# ght documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
 #
 # This file is execfile()d with the current directory set to its

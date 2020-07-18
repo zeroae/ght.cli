@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Tests for `gittr` package."""
+"""Tests for `ght` package."""
 
 import pytest
 from click.testing import CliRunner

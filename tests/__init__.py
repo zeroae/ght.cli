@@ -1,1 +1,1 @@
-"""Unit test package for gittr."""
+"""Unit test package for ght."""
