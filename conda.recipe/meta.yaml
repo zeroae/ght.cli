@@ -3,8 +3,7 @@
 {% set rosetta = data["conda_rosetta_stone"] %}
 
 package:
-  name: gittr
-
+  name: ght
   version: {{ data['version'] }}
 
 source:
@@ -62,7 +61,7 @@ test:
     - pytest tests
 
 about:
-  home: https://github.com/zeroae/gittr
+  home: https://github.com/zeroae/ght
   summary: GIT Template Render (GITTR)
   license: {{ data.get('license') }}
   license_file: LICENSE

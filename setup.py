@@ -94,7 +94,7 @@ setup_kwargs = dict(
         "doc": doc_requirements
         # fmt: on
     },
-    url="https://github.com/zeroae/gittr",
+    url="https://github.com/zeroae/ght",
     zip_safe=False,
 )
 
@@ -106,7 +106,7 @@ if "CONDA_BUILD_STATE" in os.environ:
         del setup_kwargs["use_scm_version"]
     except ModuleNotFoundError:
         print(
-            "Error: gittr requires that setuptools_scm be installed with conda-build!"  # noqa: E501
+            "Error: ght requires that setuptools_scm be installed with conda-build!"  # noqa: E501
         )
         raise
     setup_kwargs["conda_rosetta_stone"] = conda_rosetta_stone
