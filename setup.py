@@ -82,7 +82,7 @@ setup_kwargs = dict(
     long_description_content_type="text/x-rst",
     include_package_data=True,
     keywords="cli gittr cookiecutter template",
-    name="gittr",
+    name="ght",
     package_dir={"": "src"},
     packages=find_namespace_packages(where="./src"),
     setup_requires=setup_requirements,
